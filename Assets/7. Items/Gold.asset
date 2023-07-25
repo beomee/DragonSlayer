@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7985d0487932dcc42a3992f2a6ac617e, type: 3}
+  m_Name: Gold
+  m_EditorClassIdentifier: 
+  itemName: "\uACE8\uB4DC"
+  itemType: 2
+  itemPrice: 0
+  itemImage: {fileID: -203250176, guid: 047d557fe648d1e4d9ce1ede36e3b675, type: 3}
+  itemPrefab: {fileID: 6431140562296254359, guid: 3c703fdde68333244a49e585f4e70a97, type: 3}
+  ItemNumber: 0
+  itemInfo: "\uC544\uC774\uD15C\uC744 \uAD6C\uB9E4\uD560 \uC218 \uC788\uB294\n\uC7AC\uD654"
