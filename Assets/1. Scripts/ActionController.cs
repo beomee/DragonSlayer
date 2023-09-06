@@ -7,6 +7,7 @@ using UnityEngine.UI;
 // 아이템 감지 및 습득 
 public class ActionController : MonoBehaviour
 {
+    // Test
 
     [SerializeField]
     private float range; // 습득 가능한 최대 거리
