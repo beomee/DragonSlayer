@@ -7,6 +7,8 @@ public class BrownEnemyAttackCollision : MonoBehaviour
 
     public Enemy_BrownDragon brownDragon;
     public Collider collider_Brown;
+
+    // 공격타점 생성 후 비활성화
     private void OnEnable()
     {
         StartCoroutine("AutoDisable");
@@ -19,17 +21,16 @@ public class BrownEnemyAttackCollision : MonoBehaviour
         // 플레이어가 타격하는게 "Enemy" 일 경우, 에너미 클래스의 데미지함수를 호출 
         if (other.CompareTag("Player"))
         {
-                other.GetComponent<Player>().Damaged(brownDragon.enemystr);  // 플레이어에게 데미지를 입히는 함수.
+            other.GetComponent<Player>().Damaged(brownDragon.enemystr); 
             collider_Brown.enabled = false;
         }
 
     }
 
 
-
+    // 자동으로 공격타점 생성 및 해제
     private IEnumerator AutoDisable()
     {
-        // 0.2초 후에 오브젝트가 사라지도록 한다.
         yield return new WaitForSeconds(0.2f);
         collider_Brown.enabled = true;
         gameObject.SetActive(false);

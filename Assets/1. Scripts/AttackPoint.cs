@@ -6,10 +6,9 @@ public class AttackPoint : MonoBehaviour
 {
   
 
-
+    // 공격지점 활성화
     private void OnEnable()
     {
-        // 0.3초 후에 초기화 되는 코드 
         Invoke("ResetAttack", 0.3f);
 
     }

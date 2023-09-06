@@ -6,16 +6,37 @@ using UnityEngine.AI;
 
 
 
+public abstract class Skill // Skill 추상 클래스
+{
+    
+    public float coolTime { get; set; } // 현재 스킬 쿨타임 값
+    public float originCoolTime { get; set; }  // 최초 스킬 쿨타임 값
+    public Animator anim;
+    public int priority { get; } // 스킬 우선순위 값
+
+    public Skill(float coolTime, int priority, Animator anim)
+    {
+        this.coolTime = coolTime;
+        this.priority = priority;
+        this.anim = anim;
+
+        originCoolTime = coolTime;
+    }
+
+
+    public abstract void Attack();  // 상속된 Attack() 실행
+}
+
 class BiteSkill : Skill
 {
 
-    // 몬스터 스킬 생성자 메소드
+  
     public BiteSkill(float coolTime, int priority, Animator anim) : base(coolTime, priority, anim) 
     {
        
     }
 
-    public override void Attack() // 실제
+    public override void Attack() 
     {
         // 공격 애니메이션
         anim.SetTrigger("attack");
@@ -26,13 +47,14 @@ class BiteSkill : Skill
 class JumpAttackSkill : Skill
 {
 
-    public JumpAttackSkill(float coolTime, int priority, Animator anim) : base(coolTime, priority, anim) // 생성자 메소드
+    public JumpAttackSkill(float coolTime, int priority, Animator anim) : base(coolTime, priority, anim) 
     {
-        // 위 변수 외에 추가 할 내용이 있으면 여기에 추가 
+       
     }
 
-    public override void Attack() // 실제
+    public override void Attack()
     {
+        // 공격 애니메이션
         anim.SetTrigger("attack2");
     }
 }
@@ -43,78 +65,19 @@ class ShoutingAttackSkill : Skill
     [SerializeField]
     private string Attack3_Sound;
 
-    public ShoutingAttackSkill(float coolTime, int priority, Animator anim) : base(coolTime, priority, anim) // 생성자 메소드
+    public ShoutingAttackSkill(float coolTime, int priority, Animator anim) : base(coolTime, priority, anim) 
     {
-        // 위 변수 외에 추가 할 내용이 있으면 여기에 추가 
+       
     }
 
-    public override void Attack() // 실제
+    public override void Attack() 
     {
+        // 공격 애니메이션
         anim.SetTrigger("attack3");
     }
 
 }
 
-
-
-class BackJumpSkill : Skill
-{
-    NavMeshAgent agent;
-    Rigidbody rigid;
-    Transform transform;
-
-    float jumpTime = 0.2f; // 점프하고있는 시간
-    float jumpForce = 5.0f;  // 뒤로 점프할때 밀어내는 힘 
-
-
-    [SerializeField]
-    private string Attack3_Sound;
-
-
-    // 생성자 메소드
-    public BackJumpSkill(float coolTime, int priority, Animator anim, NavMeshAgent agent, Rigidbody rigid, Transform transform) : base(coolTime, priority, anim)
-    {
-
-        this.agent = agent;
-        this.rigid = rigid;
-        this.transform = transform;
-    }
-
-
-    public override void Attack() // 실제
-    {
-        anim.SetTrigger("Move_BackJump");
-
-    }
-
-
-
-    public IEnumerator WaitOneSecond()
-    {
-        yield return new WaitForSeconds(0.2f);
-
-        agent.isStopped = true; // 몬스터 무빙 멈추기
-        agent.enabled = false; //  네비게이션 비활성화
-        rigid.velocity = Vector3.zero; // 속도 0 으로 내리기 
-        rigid.AddForce(-transform.forward * jumpForce * 2 + transform.up * jumpForce, ForceMode.Impulse);
-
-        yield return new WaitForSeconds(1.0f);
-
-        rigid.useGravity = false;
-        rigid.velocity = Vector3.zero;
-        agent.enabled = true;
-        agent.isStopped = false;
-
-    }
-
-    public IEnumerator WaitJumpTime()
-    {
-        yield return new WaitForSeconds(0.2f);
-    }
-
-
-
-}
 
 class BreatheAttackSkill : Skill
 {
@@ -122,15 +85,15 @@ class BreatheAttackSkill : Skill
     [SerializeField]
     private string Attack3_Sound;
 
-    public BreatheAttackSkill(float coolTime, int priority, Animator anim) : base(coolTime, priority, anim) // 생성자 메소드
+    public BreatheAttackSkill(float coolTime, int priority, Animator anim) : base(coolTime, priority, anim) 
     {
-        // 위 변수 외에 추가 할 내용이 있으면 여기에 추가 
+       
     }
 
     public override void Attack() // 실제
     {
+        // 공격 애니메이션
         anim.SetTrigger("FrameAttack");
-
     }
 
 }
@@ -141,9 +104,8 @@ class MeteoAttackSkill : Skill
     [SerializeField]
     private string Attack3_Sound;
 
-
     // 추가할 변수 값이 있으면,MeteoAttackSkill(추가 할 변수)
-    public MeteoAttackSkill(float coolTime, int priority, Animator anim) : base(coolTime, priority, anim) // 생성자 메소드
+    public MeteoAttackSkill(float coolTime, int priority, Animator anim) : base(coolTime, priority, anim)
     {
 
     }
@@ -152,118 +114,86 @@ class MeteoAttackSkill : Skill
     {
         // 공격 애니메이션
         anim.SetTrigger("FlyFrameAttack");
-        //AudioManager.instance.PlaySE(Attack3_Sound);
     }
 
 
 }
-
-public abstract class Skill // Skill 추상 클래스
-{
-    //protected string name; // 스킬 이름
-    public float coolTime { get; set; } // 스킬 쿨타임 값
-    public float originCoolTime { get; set; }
-    public Animator anim;
-    public int priority { get; } // 스킬 우선순위 값
-
-    public Skill(float coolTime, int priority, Animator anim/*, string name,*/)
-    {
-        // this는 'Skill 클래스의' 를 의미하고, Skill class의 멤버변수 name안에 string name을 넣어주는 것.
-        //this.name = name;
-        this.coolTime = coolTime;
-        this.priority = priority;
-        this.anim = anim;
-
-        originCoolTime = coolTime;
-    }
-
-
-    public abstract void Attack();  // 상속된 Attack()을 실행시키는 코드
-}
-
-
-
-
 
 
 public class Enemy_RedDragon : MonoBehaviour
 {
 
-
     public float distance; // 플레이어와의 거리
     public float enemyhp; // 적의 체력
     public float wholeEnemyhp = 13000.0f;// 적의 전체 체력
-    public GameObject attackCollision_Enemy; // 깨물기 공격 콜라이더를 담을 변수 
-    public GameObject attackCollision_Enemy_Jump; // 뭉개기 공격콜라이더를 담을 변수 
-    public GameObject attackCollision_Enemy_Shouting; // 샤우팅 공격콜라이더를 담을 변수
-    public GameObject[] attackCollision_Enemy_Shouting_Particles; // 샤우팅 파티클을 담을 변수 
-    //public Transform backJumpPos;
-
-    public GameObject attackCollision_Enemy_Breath; // 브레쓰 공격 콜라이더를 담을 변수 
-    //public GameObject attackCollision_Enemy_Breath_Particle; // 브레쓰 공격 파티클을 담을 변수 
-
-    public GameObject meteoPref; // 메테오 프리팹을 담을 변수
-    public Transform meteoPort;
     public float attackSpeed = 10f;
-
-
-    public Transform attackPosition_Head;
-    public Transform attackPosition_Center;
-
     public float enemystr; // 적의 공격력 
-    public Transform player; // 플레이어 가져오기(hp랑 플레이어 위치를 가져와야함)
-    public Slider hpBarSlider; // 적의 체력 바
-    public GameObject victoryMessagePanel; // 승리의 독백 메세지 가져오기
-    public GameSceneMng gameSceneMng;
+    public bool startCool = false;  // 쿨타임 초기화 변수 
 
-    public GameObject PhazeChangePanel_Two;
-    public GameObject PhazeChangePanel_Three;
 
     bool isAttacking = false;
     float attackcool;
     float speed = 3f;
-
     bool isJump = false;
     bool isAttack = false;
     bool isAttackStart = false;
     bool BackOriginBgm = false;
-
     bool startFightBgm = false;
+    bool pazeTwoStart = false;
+    bool pazeThreeStart = false;
 
+
+    public GameObject attackCollision_Enemy; // 깨물기 공격 콜라이더를 담을 변수 
+    public GameObject attackCollision_Enemy_Jump; // 뭉개기 공격콜라이더를 담을 변수 
+    public GameObject attackCollision_Enemy_Shouting; // 샤우팅 공격콜라이더를 담을 변수
+    public GameObject[] attackCollision_Enemy_Shouting_Particles; // 샤우팅 파티클을 담을 변수 
+    public GameObject attackCollision_Enemy_Breath; // 브레쓰 공격 콜라이더를 담을 변수 
+    public GameObject meteoPref; // 메테오 프리팹을 담을 변수
+    public Transform meteoPort;
+    public Transform attackPosition_Head;
+    public Transform attackPosition_Center;
+    public Transform player; 
+    public Slider hpBarSlider; // 적의 체력 바
+    public GameObject victoryMessagePanel; // 승리의 독백 메세지 
+    public GameSceneMng gameSceneMng;
+    public GameObject PhazeChangePanel_Two;
+    public GameObject PhazeChangePanel_Three;
     public Rigidbody rigid; // 리지드바디를 담는 변수
-    Animator anim;
     public NavMeshAgent agent; // 네비게이션을 담는 변수
-
-    AudioManager audioManager;
-
-    SkinnedMeshRenderer mesh; // 피격 시 색깔 변경에 쓰이는 mesh
-
     public CapsuleCollider[] capColliders; // 몬스터 피격판정 콜라이더
 
 
+    // 스킬 클래스 자료형의 skillList List를 전역변수로 새롭게 생성.
+    public List<Skill> skillList = new List<Skill>();
 
-    // 적 상태를 나타내는 자료형 (열거형) 
+    // 사용된 스킬을 저장하는 리스트
+    public List<Skill> usedskillList = new List<Skill>();
+
+    Animator anim;
+    SkinnedMeshRenderer mesh; // 피격 시 색깔 변경에 쓰이는 mesh
+    AudioManager audioManager;
+
+
+
+    // 적 상태 
     public enum EnemyStete
     {
         Idle,        // 기본
         Walk,        // 이동
         Attack,      // 공격
         Dead,         // 죽음
-        //BackJump,     // 뒤로점프
-        //InProgress,
     }
 
     // 상태 변수 선언 + 첫 상태는 기본 
     public EnemyStete eState = EnemyStete.Idle;
 
 
-
     // 필요한 사운드 이름
     [SerializeField]
-    private string damaged_Sound;
+    private string damaged_Sound; // 피격
 
     [SerializeField]
-    private string Dead_Sound;
+    private string Dead_Sound; // 죽음
 
     [SerializeField]
     private string redEnemyAttack1_Sound_Bite; // 깨물기 
@@ -296,25 +226,7 @@ public class Enemy_RedDragon : MonoBehaviour
     private string redEnemyWalk_Sound; // 라카이서스 걷는 소리 
 
     [SerializeField]
-    private string Boss_Bgm;
-
-    public static Enemy_RedDragon instance; // 인스턴스화
-
-    private void Awake()
-    {
-        if (instance == null)
-        {
-            instance = this;
-
-            //DontDestroyOnLoad(gameObject);
-
-        }
-
-        else if (instance != this)
-        {
-            Destroy(gameObject);
-        }
-    }
+    private string Boss_Bgm; // 몬스터와 마주했을 때 나오는 Bgm
 
 
     // Start is called before the first frame update
@@ -326,19 +238,19 @@ public class Enemy_RedDragon : MonoBehaviour
         rigid = GetComponent<Rigidbody>();
         mesh = GetComponentInChildren<SkinnedMeshRenderer>();
 
+        // 몬스터 공격 생성 
         BiteSkill biteSkill = new BiteSkill(1f, 5, anim);
         JumpAttackSkill jumpAttackSkill = new JumpAttackSkill(8f, 4, anim);
         ShoutingAttackSkill shoutingAttackSkill = new ShoutingAttackSkill(12f, 3, anim);
 
-
-        skillList.Add(biteSkill as Skill); // Skill에 상속되어있는 biteSkill를 skillList에 저장! => (Skill)biteSkill의 모양으로도 쓸 수 있음.  
+        // Skill에 상속되어있는 biteSkill를 skillList에 저장! => (Skill)biteSkill의 모양으로도 쓸 수 있음.  
+        skillList.Add(biteSkill as Skill); 
         skillList.Add(jumpAttackSkill as Skill);
         skillList.Add(shoutingAttackSkill as Skill);
 
     }
 
-    bool pazeTwoStart = false;
-    bool pazeThreeStart = false;
+
 
     IEnumerator PhazeChangeMessage_Two()  // 2페이즈가 시작됨을 알리는 메세지를 on /off 해주는 함수
     {
@@ -372,7 +284,8 @@ public class Enemy_RedDragon : MonoBehaviour
         capColliders[1].enabled = false;
         capColliders[2].enabled = false;
     }
-    void RedEnemySoundStart_Bite() //
+
+    void RedEnemySoundStart_Bite() 
     {
         AudioManager.instance.PlaySE(redEnemyAttack1_Sound_Bite, 1,1);
     }
@@ -441,7 +354,7 @@ public class Enemy_RedDragon : MonoBehaviour
 
         if (pazeTwoStart == false)
         { 
-
+          // 2페이즈 시작
           if (enemyhp < 10000.0f)
           {
                 BreatheAttackSkill breatheAttackSkill = new BreatheAttackSkill(15f, 2, anim);
@@ -455,6 +368,7 @@ public class Enemy_RedDragon : MonoBehaviour
 
         if (pazeThreeStart == false)
         {
+            // 3페이즈 시작
             if (enemyhp < 5000.0f)
             {
                
@@ -468,15 +382,11 @@ public class Enemy_RedDragon : MonoBehaviour
         
         }
 
-
-
-
         // 플레이어와의 거리 계산
         distance = Vector3.Distance(transform.position, player.position);
 
-
         // 이동에 따라 애니메이션 전환
-        anim.SetFloat("speed", agent.velocity.magnitude); // 방향의 크기만 남기려면 magnitude
+        anim.SetFloat("speed", agent.velocity.magnitude); 
 
 
         // 상태별로 할 일 정리
@@ -484,19 +394,13 @@ public class Enemy_RedDragon : MonoBehaviour
         {
             case EnemyStete.Idle: Idle(); break;
             case EnemyStete.Walk: Walk(); break;
-            case EnemyStete.Attack:; break;
-
-
         }
-
 
         // 적과의 거리가 30미만이 될때
         if (distance < 30.0f)
         {
             // 에너미 hp바 켜기
             hpBarSlider.gameObject.SetActive(true);
-
-
         }
 
         // 적과의 거리가 30이상 될때
@@ -504,19 +408,13 @@ public class Enemy_RedDragon : MonoBehaviour
         {
             // 에너미 hp바 끄기
             hpBarSlider.gameObject.SetActive(false);
-
         }
-
 
         if (isAttacking == true) // 몬스터가 플레이어를 향해 회전하는 코드 
         {
             Vector3 l_vector = player.transform.position - transform.position;
             transform.rotation = Quaternion.Lerp(this.transform.rotation, Quaternion.LookRotation(l_vector), Time.deltaTime * speed);
-
         }
-
-        
-
     }
 
 
@@ -526,25 +424,20 @@ public class Enemy_RedDragon : MonoBehaviour
     {
         StartCoroutine(DamageColor()); // 피격시 색깔 변화
 
-
-        enemyhp -= damage; //체력 감소
-        hpBarSlider.value = enemyhp; // hp값 슬라이더에 반영
+        enemyhp -= damage; 
+        hpBarSlider.value = enemyhp; 
 
         agent.isStopped = true; // 움직임 멈추기
 
         agent.ResetPath(); // 경로 초기화
 
-        // 적의 hp가 0보다 작을 때의 상황 => 몬스터가 죽었을때
+        // 몬스터가 죽었을 때
         if (enemyhp < 0)
         {
-
             anim.SetTrigger("dead");
-
-            // 죽었을 때 
             Dead();
 
         }
-
 
     }
 
@@ -552,8 +445,6 @@ public class Enemy_RedDragon : MonoBehaviour
     void Dead()
     {
         isAttacking = false;
-
-        //Json.instance.Save();
 
         AudioManager.instance.PlayEndingBgm();
         AudioManager.instance.PlayStartBossBgm();
@@ -563,8 +454,6 @@ public class Enemy_RedDragon : MonoBehaviour
         capColliders[0].enabled = false;
         capColliders[1].enabled = false;
         capColliders[2].enabled = false;
-
-
 
         StartCoroutine(startEndingScene()); // 엔딩씬으로 가는 코루팀 함수 호출 
 
@@ -577,29 +466,23 @@ public class Enemy_RedDragon : MonoBehaviour
         gameSceneMng.StartEndingScene();
     }
 
-
     void Idle() // 기본상태 일 때 할일 
     {
         BackOriginBgm = true;
         startFightBgm = false;
 
-        // 길 찾기 중지 + 경로초기화는 세트로 해주는게 좋음
         // 길 찾기 중기
         agent.isStopped = true;
         // 경로 초기화
         agent.ResetPath();
 
-        // 플레이어와 거리가 20초과 30 이하라면  => 20이하일때만 공격 => 20초과 할 시 공격을 멈춘다.
-
-        if (distance <= 30)
+        if (distance <= 30.0f)
         {
             eState = EnemyStete.Walk; // 이동 상태로 전환 
-
         }
-
     }
 
-    void Walk() // 이동상태 일 때 할일 -> 일정거리 안으로 되면 공격하기 + 멀어지면 idle로 있는 거
+    void Walk() // 이동상태 일 때 할일 -> 일정거리 안으로 되면 공격하기 + 멀어지면 idle로 변경
     {
 
         if (startFightBgm == false)
@@ -607,18 +490,16 @@ public class Enemy_RedDragon : MonoBehaviour
             AudioManager.instance.PlayBossSceneBgm();
             startFightBgm = true;
         }
-
         agent.isStopped = false; // 길 찾기 시작
-
         agent.destination = player.position;
 
-
-        // 플레이어와 거리가 60보다 크다면
-        if (distance > 30/* && isAttack == false*/)
+        // 플레이어와 거리가 30보다 크다면
+        if (distance > 30.0f)
         {
             // 기본 상태로 전환
             eState = EnemyStete.Idle;
 
+            // 기존 Bgm으로 변경
             if (BackOriginBgm == true)
             {
                 AudioManager.instance.PlayStartBossBgm();
@@ -627,10 +508,9 @@ public class Enemy_RedDragon : MonoBehaviour
 
         }
 
-        if (distance < 12)
+        if (distance < 12.0f)
         {
             agent.isStopped = true;
-           
         }
 
         else
@@ -646,327 +526,25 @@ public class Enemy_RedDragon : MonoBehaviour
     void Attack()
     {
         #region 
-        // 1.0 ver 몬스터 공격 
-
-        //// 플레이어와의 거리가 30보다 크다면 
-        //if (distance > 40)
-        //{
-        //    // 이동 상태로 전환
-        //    eState = EnemyStete.Walk;
-
-        //    // 네비게이션 자동이동 멈추는 게 false니까 -> 다시 움직인다
-        //    agent.isStopped = false;
-        //}
-
-        //else  // 플레이어와의 거리가 40 이하라면
-        //{
-        //    if (!isAttack)
-        //    {
-        //        isAttack = true;
-
-        //        //공격 실행 
-
-        //        isAttack = false;
-
-        //    }
-
-
-        // 이동 상태로 전환
-        //eState = EnemyStete.BackJump;
-
-
-
-        //attackcool += Time.deltaTime;
-
-        //  // 2.5초 주기로 발동되게 하는 딜레이 넣어주기
-        //  if (attackcool >= 4.5f)
-        //  {
-
-        //    int randomAttack = Random.Range(1, 3);  // 1페이즈 공격 확률
-        //    int randomAttack2 = Random.Range(1, 4); // 2페이즈 공격 확률
-
-        //    // 1페이즈
-        //    if (enemyhp >= 10000f && enemyhp < 15000f) 
-        //    {
-
-        //        if (randomAttack == 2) // 25프로 확률로 특수공격 
-        //        {
-        //            // 샤우팅 공격
-        //            StartCoroutine(Attack_Shouting());
-        //        }
-
-        //        if (randomAttack == 1)
-        //        {
-        //            // 물기
-        //            StartCoroutine(Attack_Basic());
-        //        }
-
-
-        //        agent.isStopped = false;
-
-        //        attackcool = 0;
-        //    }
-
-
-        //    // 2페이즈 
-        //    if (enemyhp >= 5000f && enemyhp < 10000f)
-        //    {
-        //        if (randomAttack2 == 1) // 25프로 확률로 특수공격 
-        //        {
-        //            // 점프공격
-        //            StartCoroutine(Attack_Jump());
-        //        }
-
-        //        if (randomAttack2 == 2) // 25프로 확률로 특수공격 
-        //        {
-        //            // 물기
-        //            StartCoroutine(Attack_Basic());
-        //        }
-
-        //        if (randomAttack2 == 3) // 25프로 확률로 특수공격 
-        //        {
-        //            // 샤우팅 공격
-        //            StartCoroutine(Attack_Shouting());
-        //        }
-
-
-        //        agent.isStopped = false;
-
-        //        attackcool = 0;
-
-        //    }
-
-
-
-        //  }
-
-        //    // 3페이즈 
-        //    if (enemyhp >= 2500f && enemyhp < 5000f)
-        //    {
-
-        //     int randomAttack3 = Random.Range(1, 2); // 3페이즈 공격 확률
-
-        //      if (attackcool >= 3.5f)
-        //      {
-
-        //        if (randomAttack3 == 3) // 25프로 확률로 특수공격 
-        //        {
-
-        //            StartCoroutine(Attack_Breath());
-        //        }
-
-        //        if (randomAttack3 == 1) // 25프로 확률로 특수공격 
-        //        {
-
-        //            // 샤우팅
-        //            StartCoroutine(Attack_Shouting());
-
-        //        }
-
-        //        if (randomAttack3 == 3)
-        //        {
-        //            StartCoroutine(Attack_Basic());
-
-        //        }
-
-        //        agent.isStopped = false;
-
-        //        attackcool = 0;
-
-
-        //      }
-        //    }
-
-        ////if (enemyhp >= 1500f && enemyhp < 3000f)
-        ////{
-
-        ////    int randomAttack4 = Random.Range(1, 2); // 3페이즈 공격 확률
-
-        ////    if (attackcool >= 7f) 
-        ////    {
-
-        ////        if (randomAttack4 == 1) // 25프로 확률로 특수공격 
-        ////        {
-
-        ////            Attack_Breath();
-
-
-        ////        }
-
-
-        ////        agent.isStopped = false;
-
-        ////        attackcool = 0;
-
-
-        ////    }
-        ////}
-
-        //if (enemyhp < 2500f)
-        //{
-
-        //    int randomAttack5 = Random.Range(1, 2); // 3페이즈 공격 확률
-
-        //    if (attackcool >= 12f)
-        //    {
-
-
-        //        if (randomAttack5 == 1) // 25프로 확률로 특수공격 
-        //        {
-        //            StartCoroutine(Attack_Meteo());
-
-        //        }
-
-
-        //        agent.isStopped = false;
-
-        //        attackcool = 0;
-
-
-        //    }
-        //}
-
-
-
-
-
-
-
-
-
-
-
-
-
-        //}
-
-        #endregion
-    }
-
-
-    // 스킬 클래스 자료형의 skillList List를 전역변수로 새롭게 생성.
-    public List<Skill> skillList = new List<Skill>();
-
-    // 사용된 스킬을 저장하는 리스트
-    public List<Skill> usedskillList = new List<Skill>();
-
-    // 공격시작을 구분짓기 위한 변수 (true == 시작함 / false == 공격중이 아님)
-
-    public void isAttackFalse()  // Animation의 Add event로 호출 
-    {
-        isAttack = false;  // 공격이 끝난 상태 : 새로운 패턴을 사용 할 수 있는 상태 -> 패턴이 겹치게 사용되는 것을 막기 위함
-    }
-
-    public void isAttackTrue()  // Animation의 Add event로 호출 
-    {
-        isAttack = true;  // 공격중인 상태 : 새로운 패턴을 사용 할 수 없는 상태 -> 패턴이 겹치게 사용되는 것을 막기 위함
-    }
-
-    public bool startCool = false;  // 쿨타임 초기화 변수 
-
-    public void SkillStart()  // SkillStart 코루틴 함수를 호출하는 함수
-    {
-        if (distance <= 30 && Json.instance.data.hp > 0.0f)
-        {
-            StartCoroutine(CoroutineSkillStart());
-        }
-
-        else
-        {
-            eState = EnemyStete.Walk;
-            return;
-        }
-
-    }
-    
-    public IEnumerator CoroutineSkillStart() // 우선순위 높은 스킬 선정 + 사용 + 변수저장 + List2에 추가 + List2에 추가한 스킬 삭제 
-    {
-  
-
-        if (skillList.Count > 0)  // 공격할 수 있는 스킬의 개수가 1개 이상인 경우에만
-        {
-
-            int pos = 0; // 우선순위를 담을 변수 초기화
-
-            int maxNumber = int.MaxValue; // 가장 작은 숫자의 번호를 출력
-
-            for (int i = 0; i < skillList.Count; i++) // 스킬리스트에 저장된 숫자만큼 반복
-            {
-
-                if (skillList[i].priority < maxNumber)  // priority가 가장 작다면 사용 
-                {
-                    maxNumber = skillList[i].priority;
-                    pos = i;
-                }
-            }
-
-            yield return new WaitForSeconds(1f);  // 공격패턴간의 시간 텀
-
-            Skill usedSkill = skillList[pos];// 우선순위가 가장 높은 스킬을 지역변수로 저장
-    
-            usedSkill.Attack();  // 우선순위가 가장 높은 스킬을 사용해서 공격 
-
-            usedskillList.Add(usedSkill); // 사용한 스킬을 '사용된 스킬 리스트'에 추가 하는 작업    
-
-            skillList.Remove(usedSkill); // 우선순위가 가장 높다고 뽑힌 스킬을 '스킬 리스트'에서 삭제 
-           
-            startCool = true; // 쿨타임이 돌아간다는 것을 체크하기 위함 (true : 스킬이 시작해서 쿨타임이 돌아가고있는 상태 / false : 쿨타임이 0초가 되어서 안 돌아가고 있는 상태)
-
-            StartCoroutine(coolManager(usedSkill));  // 쿨타임을 돌리고 ,체크하는 코루틴 메서드 호출                                                                               
-        }
-
-        #region
-        // List로 스킬 관리 하기 전 확률에 따른 공격패턴 코드 
-
-        //else
+        // 페이즈에 따른 몬스터 패턴을 랜덤확률로 구현하려 했으나, 쿨타임과 우선순위로 패턴을 구현하기 위해 사용하지 않음
         //{
         //    StartCoroutine(AttackStart());
         //}
 
-
-
-
-
-
         //isAttack = false;
 
-        //Vector3 backJumpDir = -player.forward;
         //yield return new WaitForSeconds(0.1f); // 이 시간이 길어질 수록 난이도가 쉬워짐 -> 난이도 조절에 용이함
-
-
-
-
 
         //if (distance > 12f)
         //{
-        //    print("ifOK");
-        //    print(agent.enabled);
+
         //    agent.enabled = false;
 
-        //    //// 네비게이션이 비활성화 됐을때 -y축으로 추락하지 않도록 하는 코드   -> 이거는 툴의 설정을 바꾸는거라 굉장히 위험함.
+        //    //// 네비게이션이 비활성화 됐을때 -y축으로 추락하지 않도록 하는 코드   -> 이거는 툴의 설정을 바꾸는거라 굉장히 위험
         //    //RigidbodyConstraints originConstraints = rigid.constraints;
         //    //rigid.constraints = RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezeRotation;
 
-
-        //    //distance 값 확인해보기.
-        //    print(distance);
-
-        //    if (distance < 9)
-        //    {
-
-        //        while (distance > 20f)
-        //        {
-
-        //            print("While");
-
-        //            yield return null;
-
-
-        //        }
-        //    }
-
         //    //agent.enabled = true;
-        //    print(agent.enabled);
 
         //    // 네비게이션이 비활성화 됐을때 -y축으로 추락하지 않도록 하는 코드 마무리 -> 이거는 툴의 설정을 바꾸는거라 굉장히 위험함.
         //    //rigid.constraints = originConstraints;
@@ -974,9 +552,6 @@ public class Enemy_RedDragon : MonoBehaviour
 
         //    StartCoroutine(Think());
         //}
-
-
-
 
 
         //if (enemyhp >= 10000f && enemyhp < 15000f) // 1페이즈
@@ -1077,6 +652,73 @@ public class Enemy_RedDragon : MonoBehaviour
         //}
 
         #endregion
+    }
+
+
+
+    // 공격시작을 구분짓기 위한 변수 (true == 시작함 / false == 공격중이 아님)
+
+    public void isAttackFalse()  // Animation의 Add event로 호출 
+    {
+        isAttack = false;  // 공격이 끝난 상태 : 새로운 패턴을 사용 할 수 있는 상태 -> 패턴이 겹치게 사용되는 것을 막기 위함
+    }
+
+    public void isAttackTrue()  // Animation의 Add event로 호출 
+    {
+        isAttack = true;  // 공격중인 상태 : 새로운 패턴을 사용 할 수 없는 상태 -> 패턴이 겹치게 사용되는 것을 막기 위함
+    }
+
+
+    public void SkillStart()  // SkillStart 코루틴 함수를 호출하는 함수
+    {
+        if (distance <= 30 && Json.instance.data.hp > 0.0f)
+        {
+            StartCoroutine(CoroutineSkillStart());
+        }
+
+        else
+        {
+            eState = EnemyStete.Walk;
+            return;
+        }
+
+    }
+    
+    public IEnumerator CoroutineSkillStart() // 우선순위 높은 스킬 선정 + 사용 + 변수저장 + List2에 추가 + List2에 추가한 스킬 삭제 
+    {
+  
+
+        if (skillList.Count > 0)  // 공격할 수 있는 스킬의 개수가 1개 이상인 경우에만
+        {
+
+            int pos = 0; // 우선순위를 담을 변수 초기화
+
+            int maxNumber = int.MaxValue; // 가장 작은 숫자의 번호를 출력
+
+            for (int i = 0; i < skillList.Count; i++) // 스킬리스트에 저장된 숫자만큼 반복
+            {
+
+                if (skillList[i].priority < maxNumber)  // priority가 가장 작다면 사용 
+                {
+                    maxNumber = skillList[i].priority;
+                    pos = i;
+                }
+            }
+
+            yield return new WaitForSeconds(1f);  // 공격패턴간의 시간 텀
+
+            Skill usedSkill = skillList[pos];// 우선순위가 가장 높은 스킬을 지역변수로 저장
+    
+            usedSkill.Attack();  // 우선순위가 가장 높은 스킬을 사용해서 공격 
+
+            usedskillList.Add(usedSkill); // 사용한 스킬을 '사용된 스킬 리스트'에 추가 하는 작업    
+
+            skillList.Remove(usedSkill); // 우선순위가 가장 높다고 뽑힌 스킬을 '스킬 리스트'에서 삭제 
+           
+            startCool = true; // 쿨타임이 돌아간다는 것을 체크하기 위함 (true : 스킬이 시작해서 쿨타임이 돌아가고있는 상태 / false : 쿨타임이 0초가 되어서 안 돌아가고 있는 상태)
+
+            StartCoroutine(coolManager(usedSkill));  // 쿨타임을 돌리고 ,체크하는 코루틴 메서드 호출                                                                               
+        }
 
     }
 
@@ -1085,12 +727,11 @@ public class Enemy_RedDragon : MonoBehaviour
 
         float skillAddCoolTime = 0.1f;
 
-            // 스킬을 사용했다면, 그 스킬의 현재 쿨타임이 0이 될때까지 계속 - 해주기 
+            // 스킬을 사용했다면, 그 스킬의 현재 쿨타임이 0이 될때까지 계속 
             while (skill.coolTime >= skillAddCoolTime)
             {
-                skill.coolTime -= Time.deltaTime;  // 프로퍼티에서 set까지 써줘야 직접 값을 변경 할 수 있음.
-                                                   //print(usedSkill.coolTime);
-                                                   //Mathf.Min(usedSkill.coolTime = 0.0f); // 0.0f 값 밑으로는 떨어지지 않게끔 제한
+                skill.coolTime -= Time.deltaTime;  
+                                               
                 yield return null;
             }
 
@@ -1109,88 +750,29 @@ public class Enemy_RedDragon : MonoBehaviour
     }
 
 
-
-    #region
-    IEnumerator Attack_Basic()
+    public void Attack_MeteoStart() //메테오 공격 함수 - 애니메이션에서 호출
     {
 
-
-        // isAttack = true;
-
-        yield return new WaitForSeconds(3.0f);
-        // 공격중이아닐때의 변수를 false로 - isAttack = false
-
-
+        StartCoroutine(Attack_MeteoCoroutine());
 
     }
 
-    IEnumerator Attack_Shouting()
+    // 메테오프리팹 생성 코루틴 함수 
+    IEnumerator Attack_MeteoCoroutine()
     {
-        // 샤우팅
-        // 공격 애니메이션
+        GameObject meteo = Instantiate(meteoPref, meteoPort.position, meteoPort.rotation);
 
-        yield return new WaitForSeconds(4.0f);
-        //StartCoroutine(AttackStart());
-    }
+        yield return new WaitForSeconds(1f);
 
-    IEnumerator Attack_Jump()
-    {
+        meteo = Instantiate(meteoPref, meteoPort.position, meteoPort.rotation);
 
-        yield return new WaitForSeconds(5.0f);
-        //StartCoroutine(AttackStart());
-    }
+        yield return new WaitForSeconds(1f);
 
-    IEnumerator Attack_Breath()
-    {
+        meteo = Instantiate(meteoPref, meteoPort.position, meteoPort.rotation);
 
-
-
-        yield return new WaitForSeconds(5.0f);
-
-        agent.speed = 2.5f;
-        //StartCoroutine(AttackStart());
-
-        // 포지션값이 포지션의 뒤쪽으로 이동하는 코드 => 안되는 중
-        //transform.position = Vector3.MoveTowards(transform.position, transform.position + (-transform.forward * 100.0f), 0.1f);
-    }
-
-    IEnumerator Attack_Meteo()
-    {
-
-        yield return new WaitForSeconds(13.0f);
-        //StartCoroutine(AttackStart());
+        yield return new WaitForSeconds(1f);
 
     }
-
-    public float jumpTime; // 점프하고있는 시간
-    public float jumpForce;  // 뒤로 점프할때 밀어내는 힘 
-
-    IEnumerator Move_BackJump()
-    {
-
-        anim.SetTrigger("Move_BackJump");
-        yield return new WaitForSeconds(1.0f);
-
-        agent.isStopped = true; // 몬스터 무빙 멈추기1
-        agent.enabled = false; //  네비게이션 비활성화
-        rigid.velocity = Vector3.zero; // 속도 0 으로 내리기 
-        rigid.AddForce(-transform.forward * jumpForce * 2 + transform.up * jumpForce, ForceMode.Impulse);
-        yield return new WaitForSeconds(jumpTime);
-
-        rigid.useGravity = false;
-        rigid.velocity = Vector3.zero;
-        agent.enabled = true;
-        agent.isStopped = false;
-
-
-        //rigid.AddForce(transform.forward * -25, ForceMode.Impulse); // 뒤로 물어나게 되는 것
-
-        yield return new WaitForSeconds(2.0f);
-        //StartCoroutine(AttackStart());
-
-    }
-
-
 
     public void IsAttackingTrue()
     {
@@ -1202,36 +784,26 @@ public class Enemy_RedDragon : MonoBehaviour
         isAttacking = false;
     }
 
-    // 플레이어의 피를 깎는 코드 : 애니메이션의 책갈피 기능에서 원하는 타이밍에 호출됨.
+    // 플레이어에게 피해를 주는 함수 : 애니메이션의 책갈피 기능에서 원하는 타이밍에 호출됨.
     void RealAttack() // 기본공격때 플레이어에게 주는 데미지.
     {
-
-        player.SendMessage("Damaged", enemystr);  // 플레이어에 있는 데미지함수에 enemystr만큼 값을 보내준다.
-
-
+        player.SendMessage("Damaged", enemystr);
     }
 
     void RealAttackDouble() // 특수공격때 플레이어에게 주는 데미지이며, 2배의 데미지를 줌
     {
-        // 플레이어에 있는 데미지함수에 enemystr만큼 값을 보내준다.
         player.SendMessage("Damaged", enemystr * 2);
     }
-    //void DamagedEnd() // 피격 애니메이션 끝날 때 호출됨.
-    //{
-    //    // 공격 상태로 전환
-    //    eState = EnemyStete.Attack;
-    //}
+
 
     void RealAttackTriple() // 특수공격때 플레이어에게 주는 데미지이며, 3배의 데미지를 줌
     {
-
         player.SendMessage("Damaged", enemystr * 3);
     }
 
     public void OnAttackCollision_Enemy() // 애니메이션 책갈피에서 호출
     {
         attackCollision_Enemy.SetActive(true);  // 공격지점 활성화
-        //AudioManager.instance.PlaySE(PlayerAttack_Sound); // 공격 사운드 출력
 
     }
 
@@ -1250,6 +822,7 @@ public class Enemy_RedDragon : MonoBehaviour
         attackCollision_Enemy_Breath.SetActive(true);
     }
 
+    // 샤우팅 공격 시 파티클이펙트 생성 및 해제
     public IEnumerator ShoutingEffect()
     {
         attackCollision_Enemy_Shouting_Particles[0].SetActive(true);
@@ -1264,7 +837,7 @@ public class Enemy_RedDragon : MonoBehaviour
 
     }
 
-
+    // 피격시 색깔 변경 
     IEnumerator DamageColor()
     {
         mesh.material.color = new Vector4(0.9622642f, 0.3948914f, 0.9108856f, 1f);
@@ -1274,28 +847,82 @@ public class Enemy_RedDragon : MonoBehaviour
         mesh.material.color = Color.white;
     }
 
-    public void Attack_MeteoStart() //애니메이션에서 호출
-    {
 
-        StartCoroutine(Attack_MeteoCoroutine());
+    #region
+    // 아래 공격 함수는 현재 사용하지 않음.
+    // 몬스터 공격에 상속과 생성자메서드로 구현하기 전, 몬스터 패턴을 확률로만 개발할 당시 작성했던 코드
 
-    }
+    //IEnumerator Attack_Basic()
+    //{
+    //    isAttack = true;
 
-    IEnumerator Attack_MeteoCoroutine()
-    {
-        GameObject meteo = Instantiate(meteoPref, meteoPort.position, meteoPort.rotation);
+    //    yield return new WaitForSeconds(3.0f);
+    //    // 공격중이아닐때의 변수를 false로 - isAttack = false
+    //}
 
-        yield return new WaitForSeconds(1f);
+    //IEnumerator Attack_Shouting()
+    //{
+    //    // 샤우팅
+    //    // 공격 애니메이션
 
-        meteo = Instantiate(meteoPref, meteoPort.position, meteoPort.rotation);
+    //    yield return new WaitForSeconds(4.0f);
+    //    StartCoroutine(AttackStart());
+    //}
 
-        yield return new WaitForSeconds(1f);
+    //IEnumerator Attack_Jump()
+    //{
 
-        meteo = Instantiate(meteoPref, meteoPort.position, meteoPort.rotation);
+    //    yield return new WaitForSeconds(5.0f);
+    //    StartCoroutine(AttackStart());
+    //}
 
-        yield return new WaitForSeconds(1f);
+    //IEnumerator Attack_Breath()
+    //{
 
-    }
+    //    yield return new WaitForSeconds(5.0f);
+
+    //    agent.speed = 2.5f;
+    //    StartCoroutine(AttackStart());
+
+    //    transform.position = Vector3.MoveTowards(transform.position, transform.position + (-transform.forward * 100.0f), 0.1f);
+    //}
+
+    //IEnumerator Attack_Meteo()
+    //{
+
+    //    yield return new WaitForSeconds(13.0f);
+    //    StartCoroutine(AttackStart());
+
+    //}
+
+    //public float jumpTime; // 점프하고있는 시간
+    //public float jumpForce;  // 뒤로 점프할때 밀어내는 힘 
+
+    //IEnumerator Move_BackJump()
+    //{
+
+    //    anim.SetTrigger("Move_BackJump");
+    //    yield return new WaitForSeconds(1.0f);
+
+    //    agent.isStopped = true; // 몬스터 무빙 멈추기1
+    //    agent.enabled = false; //  네비게이션 비활성화
+    //    rigid.velocity = Vector3.zero; // 속도 0 으로 내리기 
+    //    rigid.AddForce(-transform.forward * jumpForce * 2 + transform.up * jumpForce, ForceMode.Impulse);
+    //    yield return new WaitForSeconds(jumpTime);
+
+    //    rigid.useGravity = false;
+    //    rigid.velocity = Vector3.zero;
+    //    agent.enabled = true;
+    //    agent.isStopped = false;
+
+
+    //    rigid.AddForce(transform.forward * -25, ForceMode.Impulse); // 뒤로 물어나게 되는 것
+
+    //    yield return new WaitForSeconds(2.0f);
+    //    StartCoroutine(AttackStart());
+
+    //}
 
     #endregion
+
 }

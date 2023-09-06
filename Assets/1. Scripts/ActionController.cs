@@ -7,7 +7,6 @@ using UnityEngine.UI;
 // 아이템 감지 및 습득 
 public class ActionController : MonoBehaviour
 {
-    // Test
 
     [SerializeField]
     private float range; // 습득 가능한 최대 거리
@@ -26,7 +25,7 @@ public class ActionController : MonoBehaviour
     private Inventory theInventory;
 
     [SerializeField]
-    private string openUi; // 플레이어가 아이템을 줍는 소리 
+    private string openUi; // UI창을 On 할때 나는 소리 
 
     public Vector3 boxsize = new Vector3(1f, 1f, 1f);
     public Item item;
@@ -83,13 +82,13 @@ public class ActionController : MonoBehaviour
     }
 
 
-    public void ItemInfoAppear()
+    public void ItemInfoAppear() // 아이템 습득가능 안내 텍스트 
     {
         actionText.gameObject.SetActive(true);
         actionText.text = "아이템 획득 ";
     }
 
-    private void InfoDisAppear()
+    private void InfoDisAppear() // 아이템 습득가능 안내 텍스트 사라지기
     {
 
         actionText.gameObject.SetActive(false);
